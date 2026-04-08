@@ -10,7 +10,7 @@ def connect_db():
     return mysql.connector.connect(
         host="localhost",
         user="root",
-        password="Sakshi@123",   # (later we can hide this)
+        password="Sakshi@123",
         database="smart_delivery_system"
     )
 
@@ -36,11 +36,9 @@ def load_graph():
 # ---------------- DIJKSTRA ALGORITHM ----------------
 
 def dijkstra(graph, start, end):
-
     pq = [(0, start)]
     distances = {node: float('inf') for node in graph}
     distances[start] = 0
-
     parent = {}
 
     while pq:
@@ -69,7 +67,7 @@ def dijkstra(graph, start, end):
 
     return path, distances[end]
 
-# --------------- HEALTH CHECK ---------------
+# ---------------- HEALTH CHECK ----------------
 
 @app.route("/", methods=["GET"])
 def home():
@@ -78,7 +76,7 @@ def home():
         "status": "OK"
     })
 
-# ---------------- OPTIMIZE ROUTE (UPDATED) ----------------
+# ---------------- OPTIMIZE ROUTE ----------------
 
 @app.route("/optimize-route", methods=["POST"])
 def optimize_route():
@@ -106,7 +104,7 @@ def optimize_route():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# ---------------- ADD DELIVERY (NEW) ----------------
+# ---------------- ADD DELIVERY ----------------
 
 @app.route("/add-delivery", methods=["POST"])
 def add_delivery():
@@ -181,22 +179,18 @@ def update_status():
     if not delivery_id or not status:
         return jsonify({"error": "Missing fields"}), 400
 
-    try:
-        conn = connect_db()
-        cursor = conn.cursor()
+    conn = connect_db()
+    cursor = conn.cursor()
 
-        cursor.execute(
-            "UPDATE deliveries SET status = %s WHERE delivery_id = %s",
-            (status, delivery_id)
-        )
+    cursor.execute(
+        "UPDATE deliveries SET status = %s WHERE delivery_id = %s",
+        (status, delivery_id)
+    )
 
-        conn.commit()
-        conn.close()
+    conn.commit()
+    conn.close()
 
-        return jsonify({"message": "Status updated successfully"})
-
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    return jsonify({"message": "Status updated successfully"})
 
 # ---------------- RUN SERVER ----------------
 
