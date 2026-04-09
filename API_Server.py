@@ -198,7 +198,110 @@ def update_status():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
+@app.route("/predict-delay", methods=["POST"])
+def predict_delay():
+
+    data = request.get_json()
+
+    agent_id = data.get("agent_id")
+    distance = data.get("distance")
+
+    if not agent_id or not distance:
+        return jsonify({"error": "Missing fields"}), 400
+
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    # Get agent average delivery time
+    cursor.execute("""
+        SELECT AVG(delivery_duration)
+        FROM fact_deliveries
+        WHERE agent_id = %s
+    """, (agent_id,))
+
+    result = cursor.fetchone()
+    avg_time = result[0] if result[0] else 0
+
+    # Rule-based prediction
+    if avg_time > 30 or distance > 8:
+        prediction = "Delayed"
+    else:
+        prediction = "On Time"
+
+    conn.close()
+
+    return jsonify({
+        "agent_avg_time": float(avg_time),
+        "distance": distance,
+        "prediction": prediction
+    })
+
+@app.route("/analytics/top-agents", methods=["GET"])
+def top_agents():
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT agent_id, AVG(delivery_duration) AS avg_time
+        FROM fact_deliveries
+        GROUP BY agent_id
+        ORDER BY avg_time ASC
+        LIMIT 5
+    """)
+
+    data = cursor.fetchall()
+
+    result = [{"agent_id": row[0], "avg_time": float(row[1])} for row in data]
+
+    conn.close()
+    return jsonify(result)
+
+@app.route("/analytics/delay-report", methods=["GET"])
+def delay_report():
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT COUNT(*), SUM(is_delayed)
+        FROM fact_deliveries
+    """)
+
+    total, delayed = cursor.fetchone()
+    percentage = (delayed / total) * 100 if total > 0 else 0
+
+    conn.close()
+
+    return jsonify({
+        "total_deliveries": total,
+        "delayed_deliveries": delayed,
+        "delay_percentage": round(percentage, 2)
+    })
+
+@app.route("/recommend-agent", methods=["GET"])
+def recommend_agent():
+
+    conn = connect_db()
+    cursor = conn.cursor()
+
+    cursor.execute("""
+        SELECT agent_id, AVG(delivery_duration) AS avg_time
+        FROM fact_deliveries
+        GROUP BY agent_id
+        ORDER BY avg_time ASC
+        LIMIT 1
+    """)
+
+    row = cursor.fetchone()
+
+    conn.close()
+
+    return jsonify({
+        "recommended_agent": row[0],
+        "avg_delivery_time": float(row[1])
+    })
+
 # ---------------- RUN SERVER ----------------
 
 if __name__ == "__main__":
     app.run(debug=True)
+    app.run(host="0.0.0.0", port=5000)
