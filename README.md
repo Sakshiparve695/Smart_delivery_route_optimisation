@@ -1,102 +1,265 @@
-# 🚚 Smart Delivery Route Optimization System
+# 🚀 Smart Delivery Intelligence & Optimization Platform
 
-A smart logistics optimization system that computes the **shortest delivery route between locations** using graph algorithms. The system models delivery locations as nodes and roads as weighted edges stored in a database.
+## 📌 Overview
 
-The optimal delivery path is calculated using **Dijkstra's Shortest Path Algorithm**.
+The **Smart Delivery Intelligence Platform** is a cloud-ready backend system designed to optimize delivery routes and provide data-driven insights for logistics operations.
 
----
+It combines:
 
-# 🚀 Features
-
-- Load road network from database
-- Represent delivery locations as a weighted graph
-- Compute optimal delivery route between locations
-- Calculate total travel distance
-- Visualize delivery network using graph visualization
-- Highlight the optimal route in the network
+* Graph algorithms (Dijkstra) for route optimization
+* ETL pipelines for data transformation
+* Data warehousing for analytics
+* REST APIs for real-time access
+* Decision engine for delay prediction and agent recommendation
 
 ---
 
-# 🛠 Tech Stack
+## 🎯 Problem Statement
 
-- Python
-- MySQL
-- NetworkX
-- Matplotlib
+Traditional delivery systems:
 
----
+* Do not optimize routes dynamically
+* Lack data-driven insights
+* Cannot predict delays or evaluate performance
 
-# 📊 Algorithm Used
-
-The system uses **Dijkstra's Algorithm** to determine the shortest path between two delivery locations.
-
-Steps:
-
-1. Load road network from database  
-2. Build graph representation of locations  
-3. Apply Dijkstra's shortest path algorithm  
-4. Return the optimal delivery route and total distance  
+👉 This project solves these issues by building a **scalable backend system with intelligence capabilities**.
 
 ---
 
-# 📷 Route Optimization Visualization
+## 🧠 Key Features
 
-The delivery network is visualized as a graph where:
+### 🔹 Route Optimization
 
-- Nodes represent delivery locations
-- Edges represent roads between locations
-- Edge weights represent distances
-- The optimal route is highlighted in the graph
+* Implemented **Dijkstra Algorithm** to compute shortest paths
+* Supports traffic-aware cost calculation
 
-Example output:
+### 🔹 Delivery Management APIs
 
-```
-Optimal Route: [1, 2, 6, 10]
-Total Distance: 15
-```
+* Create, update, and track deliveries
+* RESTful API design using Flask
+
+### 🔹 ETL Pipeline
+
+* Extracts delivery data
+* Transforms it into analytics-ready format
+* Loads into a **data warehouse (`fact_deliveries`)**
+
+### 🔹 Data Warehouse
+
+* Stores processed delivery metrics
+* Enables efficient analytics queries
+
+### 🔹 Analytics APIs
+
+* Top performing agents
+* Delivery delay analysis
+* Average delivery time
+
+### 🔹 Decision Engine
+
+* Predicts delivery delays
+* Recommends best delivery agent
+
+### 🔹 Cloud Deployment
+
+* Backend deployed on cloud platform
+* Ready for scalable usage
 
 ---
 
-# 🗂 Project Structure
+## 🏗️ System Architecture
 
 ```
-Smart-Delivery-Route-Optimization
-│
-├── smart_route_delivery.py
-├── API_Server.py
-├── database.sql
-├── README.md
-```
-
----
-
-# ⚙️ How to Run the Project
-
-1. Install required libraries
-
-```
-pip install mysql-connector-python
-pip install networkx
-pip install matplotlib
-```
-
-2. Run the program
-
-```
-python smart_route_delivery.py
+Client → REST API (Flask)
+        ↓
+   Business Logic Layer
+        ↓
+   MySQL Database (OLTP)
+        ↓
+   ETL Pipeline (Python)
+        ↓
+   Data Warehouse (fact_deliveries)
+        ↓
+   Analytics & Prediction APIs
 ```
 
 ---
 
-# 🔮 Future Improvements
+## 🛠️ Tech Stack
 
-- Multi-delivery route optimization
-- Web dashboard for route visualization
-- Integration with real-time traffic data
-- API-based delivery route service
+* **Backend:** Python, Flask
+* **Database:** MySQL
+* **Data Processing:** SQL, ETL (Python)
+* **Algorithms:** Dijkstra (Graph Theory)
+* **Cloud:** Render (API Deployment), Railway (DB - optional)
+* **Tools:** Git, GitHub
 
 ---
 
-# 👩‍💻 Author
+## 📂 Project Structure
+
+```
+├── api.py                # Main API server
+├── smart_route.py       # Dijkstra algorithm implementation
+├── etl.py               # ETL pipeline script
+├── requirements.txt
+└── README.md
+```
+
+---
+
+## ⚙️ Setup Instructions
+
+### 1️⃣ Clone Repository
+
+```
+git clone https://github.com/your-username/smart-delivery-api.git
+cd smart-delivery-api
+```
+
+---
+
+### 2️⃣ Install Dependencies
+
+```
+pip install -r requirements.txt
+```
+
+---
+
+### 3️⃣ Configure Database
+
+Update DB connection in `api.py` and `etl.py`:
+
+```python
+mysql.connector.connect(
+    host="your_host",
+    user="your_user",
+    password="your_password",
+    database="your_db",
+    port=3306
+)
+```
+
+---
+
+### 4️⃣ Run ETL Pipeline
+
+```
+python etl.py
+```
+
+---
+
+### 5️⃣ Run API Server
+
+```
+python api.py
+```
+
+---
+
+## 🌐 API Endpoints
+
+### 🔹 Health Check
+
+```
+GET /
+```
+
+---
+
+### 🔹 Analytics
+
+#### Top Agents
+
+```
+GET /analytics/top-agents
+```
+
+#### Delay Report
+
+```
+GET /analytics/delay-report
+```
+
+#### Average Delivery Time
+
+```
+GET /analytics/avg-time
+```
+
+---
+
+### 🔹 Decision APIs
+
+#### Predict Delay
+
+```
+POST /predict-delay
+```
+
+**Request Body:**
+
+```json
+{
+  "agent_id": 1,
+  "distance": 10
+}
+```
+
+---
+
+#### Recommend Agent
+
+```
+GET /recommend-agent
+```
+
+---
+
+## 📊 Sample Output
+
+```json
+[
+  {
+    "agent_id": 2,
+    "avg_time": 17.0
+  }
+]
+```
+
+---
+
+## 🧠 Key Learnings
+
+* Built a **data-driven backend system**
+* Implemented **graph algorithms in real-world use case**
+* Designed **ETL pipelines and data warehouse**
+* Developed **analytics and decision APIs**
+* Understood **cloud deployment concepts**
+
+---
+
+## 🚀 Future Enhancements
+
+* Integrate real-time traffic APIs
+* Add ML-based delay prediction
+* Use AWS S3 for storage
+* Deploy fully on AWS (EC2 + RDS)
+* Add frontend dashboard
+
+---
+
+## 👩‍💻 Author
 
 **Sakshi Parve**
+
+* Passionate about backend engineering & data systems
+* Interested in scalable system design and cloud technologies
+
+---
+
+## ⭐ If you like this project
+
+Give it a ⭐ on GitHub!
