@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 import mysql.connector
 import heapq
-
+import os
 app = Flask(__name__)
 
 # ---------------- DATABASE CONNECTION ----------------
